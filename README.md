@@ -166,14 +166,17 @@ The markdown contains:
 
 ## Claude Code Integration
 
-A skill file is included for Claude Code integration:
+Memorex includes a Claude Code skill for automatic video analysis. To install:
 
-```bash
-mkdir -p ~/.claude/plugins/memorex/skills
-cp skill/memorex.md ~/.claude/plugins/memorex/skills/
+```
+/install-plugin github.com/jayzes/memorex
 ```
 
-Claude will then automatically use memorex when you ask to analyze videos.
+Or simply ask Claude Code:
+
+> Install the memorex plugin from github.com/jayzes/memorex
+
+Once installed, Claude will automatically use memorex when you ask to analyze videos.
 
 ## Development
 
