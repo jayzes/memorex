@@ -1,0 +1,132 @@
+version: "2"
+
+run:
+  timeout: 5m
+  modules-download-mode: readonly
+
+linters:
+  default: none
+  enable:
+    # Default/essential
+    - errcheck
+    - govet
+    - staticcheck
+    - unused
+    - ineffassign
+
+    # Error handling
+    - errorlint
+    - nilerr
+
+    # Security
+    - gosec
+
+    # Bugs and correctness
+    - gocritic
+    - durationcheck
+    - forcetypeassert
+    - predeclared
+    - wastedassign
+
+    # Style and consistency
+    - revive
+    - misspell
+    - unconvert
+    - unparam
+    - prealloc
+    - dupword
+    - whitespace
+    - usestdlibvars
+
+    # Testing
+    - thelper
+
+  settings:
+    errcheck:
+      check-type-assertions: true
+      check-blank: false  # We use _ = for intentionally ignored errors
+
+    errorlint:
+      errorf: true
+      errorf-multi: true
+      asserts: true
+      comparison: true
+
+    gocritic:
+      enabled-tags:
+        - diagnostic
+        - style
+        - performance
+      disabled-checks:
+        - whyNoLint
+        - hugeParam  # 80 bytes is reasonable for value types
+
+    gosec:
+      excludes:
+        - G104  # Unhandled errors - covered by errcheck
+        - G204  # Subprocess with variable - expected for CLI
+        - G301  # Directory permissions - 0750 is reasonable
+        - G304  # File path from variable - expected for file CLI
+        - G306  # WriteFile permissions - not critical
+        - G602  # Slice bounds - false positive
+
+    govet:
+      enable-all: true
+      disable:
+        - fieldalignment
+        - shadow  # Too noisy for idiomatic Go patterns
+
+    misspell:
+      locale: US
+
+    revive:
+      rules:
+        - name: blank-imports
+        - name: context-as-argument
+        - name: context-keys-type
+        - name: dot-imports
+        - name: error-return
+        - name: error-strings
+        - name: error-naming
+        - name: exported
+          disabled: true
+        - name: increment-decrement
+        - name: indent-error-flow
+        - name: range
+        - name: receiver-naming
+        - name: time-naming
+        - name: unexported-return
+        - name: var-declaration
+        - name: var-naming
+
+    unparam:
+      check-exported: false
+
+    whitespace:
+      multi-if: true
+      multi-func: true
+
+formatters:
+  enable:
+    - gofmt
+    - goimports
+  settings:
+    goimports:
+      local-prefixes:
+        - github.com/jayzes/memorex
+
+issues:
+  exclude-rules:
+    - path: _test\.go
+      linters:
+        - errcheck
+        - gosec
+        - forcetypeassert
+        - dupl
+    - path: _test\.go
+      text: "unused-parameter"
+      linters:
+        - revive
+
+  max-issues-per-linter: 50
+  max-same-issues: 10
