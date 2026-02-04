@@ -1,4 +1,4 @@
-.PHONY: build install clean install-whisper download-model test lint fmt setup-hooks
+.PHONY: build install clean install-whisper download-model test lint fmt
 
 # Paths
 WHISPER_DIR := $(HOME)/.local/share/whisper.cpp
@@ -51,7 +51,7 @@ download-model-tiny:
 	@echo "Tiny model downloaded to $(MODEL_DIR)/ggml-tiny.bin"
 
 # Full setup
-setup: install-whisper download-model setup-hooks
+setup: install-whisper download-model
 	@echo "Setup complete! You can now run 'make build'"
 
 # Run tests
@@ -71,18 +71,12 @@ fmt:
 		echo "Note: goimports not installed, run 'go install golang.org/x/tools/cmd/goimports@latest'"; \
 	fi
 
-# Setup git hooks
-setup-hooks:
-	@git config core.hooksPath .githooks
-	@chmod +x .githooks/*
-	@echo "Git hooks configured to use .githooks/"
-
 # Show help
 help:
 	@echo "Memorex - Video to Markdown converter"
 	@echo ""
 	@echo "Targets:"
-	@echo "  setup             - Full setup (install whisper.cpp + download model + hooks)"
+	@echo "  setup             - Full setup (install whisper.cpp + download model)"
 	@echo "  build             - Build the memorex binary"
 	@echo "  install           - Install to GOPATH/bin"
 	@echo "  clean             - Remove build artifacts"
@@ -92,7 +86,6 @@ help:
 	@echo "  test              - Run tests"
 	@echo "  lint              - Run golangci-lint"
 	@echo "  fmt               - Format code with gofmt/goimports"
-	@echo "  setup-hooks       - Configure git to use .githooks/"
 	@echo ""
 	@echo "Prerequisites:"
 	@echo "  - Go 1.21+"

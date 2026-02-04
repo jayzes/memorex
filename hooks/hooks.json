@@ -1,0 +1,46 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "gofmt -l ${file} | grep . && echo 'File not formatted. Run: gofmt -w ${file}' && exit 1 || true",
+            "match_files": ["**/*.go"]
+          }
+        ]
+      },
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "golangci-lint run ${file}",
+            "match_files": ["**/*.go"]
+          }
+        ]
+      },
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "go test ./...",
+            "match_files": ["**/*.go"]
+          }
+        ]
+      },
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "claude plugin validate .",
+            "match_files": ["**/.claude-plugin/*.json", "**/skills/**/SKILL.md"]
+          }
+        ]
+      }
+    ]
+  }
+}

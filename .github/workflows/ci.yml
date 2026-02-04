@@ -59,6 +59,23 @@ jobs:
           files: coverage.out
           fail_ci_if_error: false
 
+  validate-plugin:
+    name: Validate Plugin
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install Claude Code
+        run: npm install -g @anthropic-ai/claude-code
+
+      - name: Validate plugin
+        run: claude plugin validate .
+
   build:
     name: Build
     runs-on: ${{ matrix.os }}

@@ -199,10 +199,9 @@ make lint
 
 # Format code
 make fmt
-
-# Setup git hooks (runs lint + test on commit)
-make setup-hooks
 ```
+
+When using Claude Code with the memorex plugin installed, hooks automatically run `gofmt`, `golangci-lint`, and `go test` after editing Go files, and validate plugin configuration after editing plugin files.
 
 ## Troubleshooting
 

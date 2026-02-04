@@ -9,5 +9,6 @@
   "repository": "https://github.com/jayzes/memorex",
   "license": "MIT",
   "keywords": ["video", "audio", "transcription", "whisper", "keyframes", "analysis"],
-  "skills": "./skills/"
+  "skills": "./skills/",
+  "hooks": "./hooks/hooks.json"
 }
