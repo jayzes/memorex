@@ -166,17 +166,27 @@ The markdown contains:
 
 ## Claude Code Integration
 
-Memorex includes a Claude Code plugin for automatic video analysis. To install, just ask Claude:
+Memorex includes a Claude Code plugin for automatic video analysis.
 
-> Install the memorex plugin from github.com/jayzes/memorex
+### Installation
 
-Or use the slash command:
+1. **Add the marketplace**:
+   ```
+   /plugin marketplace add jayzes/memorex
+   ```
 
-```
-/install-plugin https://github.com/jayzes/memorex
-```
+2. **Install the plugin**:
+   ```
+   /plugin install memorex@jayzes-memorex
+   ```
 
-Once installed, Claude will automatically use memorex when you ask to analyze videos. The skill is invoked via `/memorex:analyze-video` or automatically when you mention video analysis.
+Or just ask Claude:
+
+> Add the memorex marketplace from jayzes/memorex and install the memorex plugin
+
+### Usage
+
+Once installed, Claude will automatically use memorex when you ask to analyze videos. You can also invoke it directly with `/memorex:analyze-video`.
 
 ## Development
 

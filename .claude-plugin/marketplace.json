@@ -1,0 +1,11 @@
+{
+  "name": "memorex",
+  "description": "Video and audio analysis tools for Claude Code",
+  "plugins": [
+    {
+      "name": "memorex",
+      "source": ".",
+      "description": "Convert video and audio files into Claude-friendly markdown with transcripts and keyframes"
+    }
+  ]
+}
