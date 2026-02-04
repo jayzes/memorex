@@ -1,23 +1,23 @@
 # Memorex
 
-Convert video and audio files into Claude-friendly markdown with transcripts and keyframes.
+*Is it live, or is it Memorex?*
 
-Memorex extracts **transcripts** (via Whisper) and **keyframes** (via similarity detection) from video/audio files, outputting structured markdown that's ideal for analysis by Claude or other LLMs.
+Give Claude perfect recall of any video. Memorex converts video and audio into structured markdown with transcripts and keyframes—so Claude can see what you saw and hear what you heard.
 
-## Features
+## Why Memorex?
 
-- **Smart keyframe extraction** - Uses normalized cross-correlation to detect significant visual changes
-- **Accurate transcription** - Powered by whisper.cpp with timestamp segments
-- **Auto-downloads models** - Whisper model downloads automatically on first use
-- **Progress feedback** - Real-time progress bars for each processing step
-- **Configurable output** - Adjust quality, scale, and similarity thresholds
-- **Claude Code integration** - Includes a skill for automatic video analysis
+Claude can't watch videos. But it can read markdown and view images. Memorex bridges that gap:
+
+- **Transcripts with timestamps** — Every word, synced to the timeline
+- **Smart keyframes** — Only the frames that matter, not 30 fps of redundancy
+- **One command** — Point it at a video, get back something Claude understands
 
 ## Demo
 
 ```
-memorex
+$ memorex demo.mp4
 
+memorex
   Processing: demo.mp4
   Duration: 2m 34s
 
@@ -33,96 +33,49 @@ memorex
   Estimated tokens: ~15,600
 ```
 
-## Installation
+## Install
 
-### Prerequisites
+**Prerequisites:** FFmpeg and whisper.cpp
 
-- **FFmpeg** - Required for video/audio processing
-  ```bash
-  # macOS
-  brew install ffmpeg
+```bash
+# macOS
+brew install ffmpeg whisper-cpp
 
-  # Ubuntu/Debian
-  sudo apt install ffmpeg
-  ```
+# Ubuntu/Debian
+sudo apt install ffmpeg
+make install-whisper  # builds whisper.cpp from source
+```
 
-- **whisper.cpp** - Required for transcription
-  ```bash
-  # macOS
-  brew install whisper-cpp
+**Install memorex:**
 
-  # Ubuntu/Debian - build from source
-  make install-whisper
-  ```
-
-### Install memorex
-
-**Option 1: Go install (recommended)**
 ```bash
 go install github.com/jayzes/memorex/cmd/memorex@latest
 ```
 
-**Option 2: Build from source**
-```bash
-git clone https://github.com/jayzes/memorex.git
-cd memorex
-make build
-# Binary is at ./bin/memorex
-```
-
-**Option 3: Full setup (includes whisper.cpp)**
-```bash
-git clone https://github.com/jayzes/memorex.git
-cd memorex
-make setup
-make build
-```
-
-The Whisper model (~148MB) downloads automatically on first use to `~/.cache/whisper/`.
+The Whisper model (~148MB) downloads automatically on first run.
 
 ## Usage
 
-```
-memorex [options] <video-file>
-
-Options:
-  -o, --output      Output file path (default: <input>_memorex.md)
-  -t, --threshold   Frame similarity threshold 0.0-1.0 (default: 0.85)
-  -q, --quality     JPEG quality 1-100 (default: 30)
-  -s, --scale       Frame scale factor (default: 0.5)
-  -m, --model       Whisper model path (default: ~/.cache/whisper/ggml-base.bin)
-  --no-transcript   Skip audio transcription
-  --no-frames       Skip frame extraction (audio only)
-```
-
-### Examples
-
 ```bash
-# Basic usage - outputs video_memorex.md + video_memorex_frames/
-memorex video.mp4
-
-# Custom output location
-memorex -o analysis.md video.mp4
-
-# Fewer keyframes (for fast-changing videos like presentations)
-memorex -t 0.9 presentation.mov
-
-# More keyframes (for static videos like interviews)
-memorex -t 0.7 interview.mp4
-
-# Audio only (podcasts, voice memos)
-memorex --no-frames podcast.mp3
-
-# Video only (skip transcription)
-memorex --no-transcript screencast.mp4
-
-# Smaller output files
-memorex -q 20 -s 0.3 large_video.mp4
+memorex video.mp4                    # Basic usage
+memorex -t 0.9 presentation.mov      # Fewer keyframes (fast-changing video)
+memorex -t 0.7 interview.mp4         # More keyframes (static video)
+memorex --no-frames podcast.mp3      # Audio only
+memorex --no-transcript silent.mp4   # Video only
+memorex -q 20 -s 0.3 huge.mp4        # Smaller output
 ```
 
-## Output Format
+**Options:**
+| Flag | Default | Description |
+|------|---------|-------------|
+| `-o, --output` | `<input>_memorex.md` | Output path |
+| `-t, --threshold` | `0.85` | Frame similarity (lower = more keyframes) |
+| `-q, --quality` | `30` | JPEG quality (1-100) |
+| `-s, --scale` | `0.5` | Frame scale factor |
+| `--no-transcript` | | Skip transcription |
+| `--no-frames` | | Skip frame extraction |
 
-Memorex generates a markdown file alongside a frames directory:
+## Output
 
 ```
 video_memorex.md
@@ -132,15 +85,14 @@ video_memorex_frames/
 └── frame_0089.jpg
 ```
 
-The markdown contains:
+The markdown gives Claude everything it needs:
 
 ```markdown
 # Video Analysis: video.mp4
 
 ## Metadata
 - Duration: 2m 34s
-- Original frames: 154
-- Keyframes extracted: 12
+- Keyframes: 12
 - Token estimate: ~15,600
 
 ## Transcript
@@ -152,107 +104,46 @@ The markdown contains:
 
 ### Frame 1 (0:00)
 ![Frame at 0:00](video_memorex_frames/frame_0001.jpg)
-
-### Frame 15 (0:15)
-![Frame at 0:15](video_memorex_frames/frame_0015.jpg)
 ```
+
+## Claude Code Plugin
+
+Let Claude handle everything automatically.
+
+```
+/plugin marketplace add jayzes/memorex
+/plugin install memorex@jayzes-memorex
+```
+
+Then just ask Claude to analyze a video. It'll run memorex, read the output, and tell you what it sees.
 
 ## How It Works
 
-1. **Frame extraction** - Extracts frames at 1 fps using FFmpeg
-2. **Keyframe detection** - Compares consecutive frames using normalized cross-correlation; frames below the similarity threshold are marked as keyframes
-3. **Audio transcription** - Extracts audio to 16kHz mono WAV, transcribes with whisper.cpp
-4. **Output generation** - Combines transcript and keyframes into structured markdown
-
-## Claude Code Integration
-
-Memorex includes a Claude Code plugin for automatic video analysis.
-
-### Installation
-
-1. **Add the marketplace**:
-   ```
-   /plugin marketplace add jayzes/memorex
-   ```
-
-2. **Install the plugin**:
-   ```
-   /plugin install memorex@jayzes-memorex
-   ```
-
-Or just ask Claude:
-
-> Add the memorex marketplace from jayzes/memorex and install the memorex plugin
-
-### Usage
-
-Once installed, Claude will automatically use memorex when you ask to analyze videos. You can also invoke it directly with `/memorex:analyze-video`.
+1. **Extract** — FFmpeg pulls frames at 1 fps
+2. **Compare** — Normalized cross-correlation finds visually distinct frames
+3. **Transcribe** — whisper.cpp converts speech to timestamped text
+4. **Package** — Everything becomes Claude-readable markdown
 
 ## Development
 
 ```bash
-# Run tests
-make test
-
-# Run linter
-make lint
-
-# Format code
-make fmt
+make test    # Run tests
+make lint    # Run linter
+make fmt     # Format code
 ```
-
-When using Claude Code with the memorex plugin installed, hooks automatically run `gofmt`, `golangci-lint`, and `go test` after editing Go files, and validate plugin configuration after editing plugin files.
 
 ## Troubleshooting
 
-**FFmpeg not found**
-```bash
-# macOS
-brew install ffmpeg
-
-# Ubuntu/Debian
-sudo apt install ffmpeg
-```
-
-**whisper-cli not found**
-```bash
-# macOS
-brew install whisper-cpp
-
-# Or build from source
-make install-whisper
-# Then add to PATH or symlink:
-ln -sf ~/.local/share/whisper.cpp/src/build/bin/whisper-cli /usr/local/bin/whisper-cli
-```
-
-**Build errors with whisper.cpp**
-```bash
-# Ensure CMake and C++ compiler are installed
-# macOS
-brew install cmake && xcode-select --install
-
-# Ubuntu/Debian
-sudo apt install cmake build-essential
-```
-
-**Out of memory with large videos**
-```bash
-# Reduce frame scale and increase threshold
-memorex -s 0.25 -t 0.95 large_video.mp4
-```
+| Problem | Solution |
+|---------|----------|
+| FFmpeg not found | `brew install ffmpeg` or `apt install ffmpeg` |
+| whisper-cli not found | `brew install whisper-cpp` or `make install-whisper` |
+| Out of memory | Use `-s 0.25 -t 0.95` for large videos |
 
 ## Contributing
 
-Contributions are welcome! Please:
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Make your changes
-4. Run tests and linting (`make test lint`)
-5. Commit your changes (`git commit -m 'Add amazing feature'`)
-6. Push to the branch (`git push origin feature/amazing-feature`)
-7. Open a Pull Request
+Fork, branch, code, test, PR. The usual.
 
 ## License
 
-MIT License - see [LICENSE](LICENSE) for details.
+MIT
