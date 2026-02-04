@@ -106,6 +106,19 @@ linters:
       multi-if: true
       multi-func: true
 
+  exclusions:
+    rules:
+      - path: _test\.go
+        linters:
+          - errcheck
+          - gosec
+          - forcetypeassert
+          - dupl
+      - path: _test\.go
+        text: "unused-parameter"
+        linters:
+          - revive
+
 formatters:
   enable:
     - gofmt
@@ -116,17 +129,5 @@ formatters:
         - github.com/jayzes/memorex
 
 issues:
-  exclude-rules:
-    - path: _test\.go
-      linters:
-        - errcheck
-        - gosec
-        - forcetypeassert
-        - dupl
-    - path: _test\.go
-      text: "unused-parameter"
-      linters:
-        - revive
-
   max-issues-per-linter: 50
   max-same-issues: 10
