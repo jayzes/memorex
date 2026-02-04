@@ -1,10 +1,18 @@
 {
-  "name": "memorex",
-  "description": "Video and audio analysis tools for Claude Code",
+  "name": "jayzes-memorex",
+  "owner": {
+    "name": "Jay Zeschin"
+  },
+  "metadata": {
+    "description": "Video and audio analysis tools for Claude Code"
+  },
   "plugins": [
     {
       "name": "memorex",
-      "source": ".",
+      "source": {
+        "source": "github",
+        "repo": "jayzes/memorex"
+      },
       "description": "Convert video and audio files into Claude-friendly markdown with transcripts and keyframes"
     }
   ]
