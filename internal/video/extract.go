@@ -104,7 +104,7 @@ func ExtractFrames(inputPath string, duration time.Duration, onProgress Progress
 
 	// Parse frame files and create Frame objects
 	framePattern := regexp.MustCompile(`^(\d+)\.png$`)
-	var frames []Frame
+	frames := make([]Frame, 0, len(entries))
 
 	for _, entry := range entries {
 		if entry.IsDir() {
