@@ -1,3 +1,7 @@
+![Blown away](header.webp)
+
+*(Yes, I know this is technically a Maxell ad, not a Memorex one. But it's a better image.)*
+
 # Memorex
 
 *Is it live, or is it Memorex?*
