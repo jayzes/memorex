@@ -68,54 +68,54 @@ memorex --help
 
 ## Workflow
 
-1. **Confirm the video file exists**
-   - Verify the file path is accessible
-   - Note the file size and format
+**IMPORTANT: Run this entire workflow as a subagent** using the `Agent` tool with `subagent_type: "general-purpose"`. This keeps the potentially large memorex output (transcripts, keyframe images) out of the main conversation context.
 
-2. **Run memorex**
+### Subagent prompt template
+
+Launch a single `general-purpose` Agent with a prompt like the following (fill in the bracketed values):
+
+```
+Process and analyze a video file for the user.
+
+Video path: [video-path]
+User's question/goal: [what the user wants to know about the video]
+
+Follow these steps:
+
+1. Confirm the video file exists (ls the path, note file size and format).
+
+2. Run memorex:
    ```bash
    mkdir -p /tmp/memorex
-   memorex -o /tmp/memorex/<video-basename>_analysis.md <video-path>
+   memorex -o /tmp/memorex/[video-basename]_analysis.md [video-path]
    ```
-
    Options to consider:
    - `-t 0.9` for fewer keyframes (less similar frames filtered)
    - `-t 0.7` for more keyframes (more sensitive to changes)
    - `--no-transcript` if only visual analysis needed
    - `--no-frames` for audio-only analysis
 
-3. **Report extraction results**
-   - Number of keyframes extracted
-   - Transcript length
-   - Estimated token cost
+3. Read the generated markdown file at `/tmp/memorex/[video-basename]_analysis.md` using the Read tool.
 
-4. **Ask user what to analyze**
-   - Full video walkthrough?
-   - Specific UI elements?
-   - Looking for bugs or issues?
-   - Compare to expected behavior?
+4. Review the metadata (duration, frame count, keyframe count, token estimate).
 
-5. **Read and analyze the output**
+5. Read relevant keyframe images from the frames directory using the Read tool (Claude can see images). Cross-reference transcript timestamps with keyframe timestamps.
 
-   Memorex generates two outputs:
+6. Based on the user's goal, provide a thorough analysis covering:
+   - Summary of what happens in the video
+   - Relevant details tied to the user's question
+   - Key moments with timestamps
+   - Descriptions of what's visible in important keyframes
 
-   **Markdown file** (`<input>_memorex.md`):
-   - Contains metadata (duration, frame count, token estimate)
-   - Full transcript with timestamps in `[M:SS]` format
-   - Keyframe references with timestamps
-   - Use the `Read` tool to load this file
+Return a concise but complete analysis. Include the output file path so the user can reference it later.
+```
 
-   **Frames directory** (`<input>_memorex_frames/`):
-   - Contains JPEG images of each keyframe
-   - Named `frame_NNNN.jpg` where NNNN is the frame number
-   - Use the `Read` tool to view these images - Claude can see image contents
-   - Keyframes are ordered chronologically and correspond to transcript timestamps
+### What to do in the main conversation
 
-   **Analysis approach**:
-   - First read the markdown file to understand the video structure
-   - Read specific keyframe images when you need to see what's on screen at a particular moment
-   - Cross-reference transcript timestamps with keyframe timestamps to correlate audio and visuals
-   - The token estimate helps gauge how much of the output can be processed in one context
+1. Confirm the video file path with the user if ambiguous
+2. Launch the Agent subagent with the prompt above
+3. Relay the agent's analysis back to the user in a concise summary
+4. If the user has follow-up questions, launch another Agent to re-read the memorex output files and answer specifically
 
 ## Output Format
 
@@ -158,34 +158,9 @@ For large videos (>30 keyframes), suggest:
 - Focus on specific time ranges if the user knows where to look
 - Start with transcript-only analysis to identify relevant sections
 
-## After Running Memorex
+## Follow-up Questions
 
-Once memorex completes, follow these steps to analyze the video:
-
-1. **Read the markdown file** using the `Read` tool:
-   ```
-   Read the file at /tmp/memorex/<video-basename>_analysis.md
-   ```
-
-2. **Review the metadata** to understand scope:
-   - Duration tells you video length
-   - Token estimate helps plan analysis depth
-   - Keyframe count indicates visual complexity
-
-3. **Scan the transcript** for relevant sections:
-   - Look for keywords related to user's question
-   - Note timestamps of interesting moments
-
-4. **View specific keyframes** as needed:
-   ```
-   Read the image at /path/to/video_memorex_frames/frame_0015.jpg
-   ```
-   - View frames that correspond to important transcript moments
-   - Compare consecutive keyframes to understand transitions
-
-5. **Correlate audio and visuals**:
-   - Match transcript timestamps to nearest keyframes
-   - Describe what's being shown while specific things are being said
+If the user has follow-up questions about a previously analyzed video, launch another `general-purpose` Agent subagent with a prompt that tells it to re-read the memorex output files at `/tmp/memorex/` and answer the specific question. This avoids loading the full output into the main context.
 
 ## Example Commands
 
