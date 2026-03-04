@@ -1,6 +1,6 @@
 {
   "name": "memorex",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Convert video and audio files into Claude-friendly markdown with transcripts and keyframes",
   "author": {
     "name": "Jay Zeschin",
@@ -9,6 +9,5 @@
   "repository": "https://github.com/jayzes/memorex",
   "license": "MIT",
   "keywords": ["video", "audio", "transcription", "whisper", "keyframes", "analysis"],
-  "skills": "./skills/",
-  "hooks": "./hooks/hooks.json"
+  "skills": "./skills/"
 }
