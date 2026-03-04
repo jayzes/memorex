@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(memorex:*)",
+      "Bash(which memorex:*)",
+      "Bash(which ffmpeg:*)",
+      "Bash(which whisper-cli:*)",
+      "Bash(ls:*)",
+      "Bash(mkdir -p /tmp/memorex:*)"
+    ]
+  }
+}

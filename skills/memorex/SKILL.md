@@ -74,7 +74,8 @@ memorex --help
 
 2. **Run memorex**
    ```bash
-   memorex -o /tmp/video_analysis.md <video-path>
+   mkdir -p /tmp/memorex
+   memorex -o /tmp/memorex/<video-basename>_analysis.md <video-path>
    ```
 
    Options to consider:
@@ -163,7 +164,7 @@ Once memorex completes, follow these steps to analyze the video:
 
 1. **Read the markdown file** using the `Read` tool:
    ```
-   Read the file at /path/to/video_memorex.md
+   Read the file at /tmp/memorex/<video-basename>_analysis.md
    ```
 
 2. **Review the metadata** to understand scope:
